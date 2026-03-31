@@ -6,14 +6,24 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.util.ArrayList;
 
 class ClientThread extends Thread {
 
+    private static int clientIdGenerator = 0;
     private final Socket clientSocket;
+    private final int clientId;
 
     ClientThread(Socket sock) {
         this.clientSocket = sock;
+        this.clientId = getNextClientId();
+    }
+
+    private static int getNextClientId() {
+        return clientIdGenerator++;
+    }
+
+    public int getClientId() {
+        return this.clientId;
     }
 
     @Override
@@ -34,7 +44,9 @@ class ClientThread extends Thread {
                 writer.println(input + '\n');
 
                 input = reader.readLine();
-                System.out.println("Clinet: " + input);
+                System.out.println(
+                    "Clinet - " + this.getClientId() + ": " + input
+                );
             }
 
             writer.println("Exiting...");
